@@ -14,7 +14,6 @@ behave mswin
 "Load plugins with pathogen.
 execute pathogen#infect()
 execute pathogen#helptags()
-
 "Setup custom font."
 "Download site for Anonymous Pro:
 "http://www.marksimonson.com/fonts/view/anonymous-pro
@@ -30,9 +29,11 @@ set go-=m go-=T go-=r
 
 "Syntax is good.
 syntax on
-filetype plugin indent on
+"Set autoindent
+set smartindent
+"Filetype plugins.
 filetype plugin on
-filetype on
+filetype plugin indent on
 
 " Automatic reloading of .vimrc
 autocmd! bufwritepost .vimrc source %
@@ -78,8 +79,8 @@ map <Leader>n <esc>:tabprevious<CR>
 map <Leader>m <esc>:tabnext<CR>
 
 "Indentation enhancement in visual mode.
-vnoremap < <gv " better indentation
-vnoremap > >gv " better indentation
+"vnoremap < <gv " better indentation
+"vnoremap > >gv " better indentation
 
 "Show trailing whitespace.
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
@@ -93,7 +94,7 @@ au WinEnter * set cursorline
 set cursorline
 
 highlight CursorLine ctermbg=233
-set colorcolumn=80
+"set colorcolumn=80
 highlight ColorColumn ctermbg=233
 
 " Showing line numbers and length
@@ -131,16 +132,16 @@ autocmd VimEnter * TlistToggle
 autocmd VimEnter * NERDTree
 
 " Set up code completion
-if v:version >= 700
-  set omnifunc=syntaxcomplete#Complete " override built-in C omnicomplete with C++ OmniCppComplete plugin
-  let OmniCpp_GlobalScopeSearch   = 1
-  let OmniCpp_DisplayMode         = 1
-  let OmniCpp_ShowScopeInAbbr     = 0 "do not show namespace in pop-up
-  let OmniCpp_ShowPrototypeInAbbr = 1 "show prototype in pop-up
-  let OmniCpp_ShowAccess          = 1 "show access in pop-up
-  let OmniCpp_SelectFirstItem     = 1 "select first item in pop-up
-  set completeopt=menuone,menu,longest
-endif
+"if v:version >= 700
+"  set omnifunc=syntaxcomplete#Complete " override built-in C omnicomplete with C++ OmniCppComplete plugin
+"  let OmniCpp_GlobalScopeSearch   = 1
+"  let OmniCpp_DisplayMode         = 1
+"  let OmniCpp_ShowScopeInAbbr     = 0 "do not show namespace in pop-up
+"  let OmniCpp_ShowPrototypeInAbbr = 1 "show prototype in pop-up
+"  let OmniCpp_ShowAccess          = 1 "show access in pop-up
+"  let OmniCpp_SelectFirstItem     = 1 "select first item in pop-up
+"  set completeopt=menuone,menu,longest
+"endif
 
 if version >= 700
   let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
@@ -254,5 +255,33 @@ map <@>t :o{}O
 "insert mode.
 map <@>w :dei
 "Create get/set methods below a property, insert mode in get.
-map <@>p :o{}Oget{;}kboset{;}kjkhireturn jhivalue = ki
+map <@>p :o{}Oget{;}oset{;}kjkhireturn jhi= valuekli
+
+"==============================================================================
+"Text Files
+"==============================================================================
+
+"Autoformat .txt files to have a line break.
+au BufEnter *.txt setl tx ts=4 sw=4 fo+=n2a 
+:autocmd BufNewFile,BufRead *.txt set wrap
+
+func! WordProcessorMode() 
+  setlocal formatoptions=1 
+  setlocal noexpandtab 
+  map j gj 
+  map k gk
+  setlocal spell spelllang=en_us 
+  "set thesaurus+=/Users/sbrown/.vim/thesaurus/mthesaur.txt
+  set dictionary=C:\Vim\vimfiles\dict\wordsEn
+  set complete+=k
+  set formatprg=par
+  setlocal wrap 
+  "call DoWordComplete()
+  "setlocal omnifunc=WordComplete
+  setlocal omnifunc=DoWordComplete
+  call SuperTabSetDefaultCompletionType("<c-x><c-n>")"
+  "setlocal completefunc=WordComplete
+  "setlocal linebreak 
+endfu 
+com! WP call WordProcessorMode()
 

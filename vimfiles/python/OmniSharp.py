@@ -39,6 +39,7 @@ def getCompletions(ret, column, partialWord):
     parameters['column'] = vim.eval(column)
     parameters['wordToComplete'] = vim.eval(partialWord)
 
+    parameters['buffer'] = '\r\n'.join(vim.eval('s:textBuffer')[:])
     js = getResponse('/autocomplete', parameters)
 
     command_base = ("add(" + ret +
@@ -72,7 +73,7 @@ def findImplementations(ret):
     if(js != ''):
         usages = json.loads(js)['Locations']
 
-        command_base = ("add(" + ret +
+        command_base = ("add(" + ret + 
             ", {'filename': '%(FileName)s', 'lnum': '%(Line)s', 'col': '%(Column)s'})")
         if(len(usages) == 1):
             usage = usages[0]
@@ -148,3 +149,4 @@ def typeLookup(ret):
         type = json.loads(js)['Type']
         if(type != None):
             vim.command("let %s = '%s'" % (ret, type)) 
+
