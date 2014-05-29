@@ -345,7 +345,7 @@ set nofoldenable
 "C#
 "==============================================================================
 
-autocmd BufNewFile,BufRead *.cs set ft=csharp
+autocmd BufNewFile,BufRead *.cs set ft=cs
 
 "This is the default value, setting it isn't actually necessary
 let g:OmniSharp_host = "http://localhost:2000"
@@ -370,22 +370,38 @@ set completeopt=longest,menuone,preview
 "move the preview window (code documentation) to the bottom of the screen, so it doesn't move the code!
 set splitbelow
 
-nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
+autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuildAsync<cr>
 " Builds can run asynchronously with vim-dispatch installed
 "nnoremap <F5> :wa!<cr>:OmniSharpBuildAsync<cr>
 
 "The following commands are contextual, based on the current cursor position.
 
-nnoremap <F12> :OmniSharpGotoDefinition<cr>
-"nnoremap gd :OmniSharpGotoDefinition<cr>
+autocmd FileType cs nnoremap gd :OmniSharpGotoDefinition<cr>
 nnoremap <leader>fi :OmniSharpFindImplementations<cr>
 nnoremap <leader>ft :OmniSharpFindType<cr>
 nnoremap <leader>fs :OmniSharpFindSymbol<cr>
 nnoremap <leader>fu :OmniSharpFindUsages<cr>
 nnoremap <leader>fm :OmniSharpFindMembersInBuffer<cr>
+" cursor can be anywhere on the line containing an issue for this one
+nnoremap <leader>x  :OmniSharpFixIssue<cr>
 nnoremap <leader>tt :OmniSharpTypeLookup<cr>
-"I find contextual code actions so useful that I have it mapped to the spacebar
-nnoremap <space> :OmniSharpGetCodeActions<cr>
+nnoremap <leader>dc :OmniSharpDocumentation<cr>
+
+" Get Code Issues and syntax errors
+let g:syntastic_cs_checkers = ['syntax', 'issues']
+"autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+
+"show type information automatically when the cursor stops moving
+autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+" this setting controls how long to pause (in ms) before fetching type / symbol information.
+set updatetime=500
+" Remove 'Press Enter to continue' message when type information is longer than one line.
+set cmdheight=2
+
+" Contextual code actions (requires CtrlP)
+nnoremap <leader><space> :OmniSharpGetCodeActions<cr>
+" Run code actions with text selected in visual mode to extract method
+vnoremap <leader><space> :call OmniSharp#GetCodeActions('visual')<cr>
 
 " rename with dialog
 nnoremap <leader>nm :OmniSharpRename<cr>
